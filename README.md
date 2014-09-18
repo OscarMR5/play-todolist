@@ -11,4 +11,4 @@ Práctica de la asignatura MADS - Grado en Ingeniería Informática Universidad de 
 * GitHub
 * Heroku
 
-**[Enlace a aplicación](http://ancient-citadel-4226.herokuapp.com/)**
+**[Enlace a aplicación](http://salty-taiga-3942.herokuapp.com/)**
