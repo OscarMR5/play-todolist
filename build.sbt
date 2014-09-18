@@ -14,5 +14,5 @@ libraryDependencies ++= Seq(
 )
 
 val appDependencies = Seq(
-  "postgresql" % "postgresql" % "8.4-702.jdbc4"
+  "postgresql" % "postgresql" % "9.1-901-1.jdbc4"
 )
