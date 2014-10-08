@@ -17,19 +17,12 @@ object Task {
       }
   }
 
-  val simple = {
-    get[Long]("id") ~
-      get[String]("label") map {
-        case id ~ label => Task(id, label)
-      }
-  }
-
   /**
    * Retrieve a computer from the id.
    */
-  def getTask(id: Long): Task = {
+  def getTask(id: Long): Option[Task] = {
     DB.withConnection { implicit connection =>
-      SQL("select * from task where id = {id}").on('id -> id).as(task.single)
+      SQL("select * from task where id = {id}").on('id -> id).as(task.singleOpt)
     }
   }
 

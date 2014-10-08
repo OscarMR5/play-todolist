@@ -34,8 +34,13 @@ object Application extends Controller {
 }
 
   def readTask(id: Long) = Action {
-    val json = Json.toJson(Task.getTask(id) )
-    Ok(json)
+    val tarea = Task.getTask(id)
+    if (tarea.isEmpty) {
+      NotFound//("No existe la tarea con id:"+ id)
+    } else {
+      val json = Json.toJson(tarea.get)
+      Ok(json)
+    }
   }
   
   def newTask = Action { implicit request =>
