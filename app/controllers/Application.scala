@@ -42,16 +42,20 @@ object Application extends Controller {
       Ok(json)
     }
   }
-  
+
   def newTask = Action { implicit request =>
-  taskForm.bindFromRequest.fold(
-    errors => BadRequest(views.html.index(Task.all(), errors)),
-    label => {
-      Task.create(label)
-      Redirect(routes.Application.tasks)
-    }
-  )
-}
+    taskForm.bindFromRequest.fold(
+      errors => BadRequest(views.html.index(Task.all(), errors)),
+      label => {
+        val id = Task.create(label)
+        if (id.isEmpty) {
+          InternalServerError
+        } else {
+          val json = Json.toJson(Task.getTask(id.get).get)
+          Created(json)
+        }
+      })
+  }
   
   def deleteTask(id: Long) = Action {
   Task.delete(id)
