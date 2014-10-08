@@ -28,10 +28,17 @@ object Application extends Controller {
     //Ok(views.html.index("Your new application is ready."))
     //Ok("Hello world)
   }
-
+  
+  //Nueva funcion que funciona a traves de API REST
   def tasks = Action {
-  Ok(views.html.index(Task.all(), taskForm))
-}
+    val json = Json.toJson(Task.all())
+    Ok(json)
+  }
+  
+  //Funcion anterior que devuelve la vista web
+  def tasksOLD = Action {
+    Ok(views.html.index(Task.all(), taskForm))
+  }
 
   def readTask(id: Long) = Action {
     val tarea = Task.getTask(id)

@@ -6,6 +6,7 @@
 GET     /                           controllers.Application.index
 
 # Tasks          
+GET     /tasksold              controllers.Application.tasksOLD
 GET     /tasks                  controllers.Application.tasks
 GET     /tasks/:id              controllers.Application.readTask(id: Long)
 POST    /tasks                  controllers.Application.newTask
