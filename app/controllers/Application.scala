@@ -24,7 +24,7 @@ object Application extends Controller {
    )
 
   def index = Action {
-   Redirect(routes.Application.tasks)
+   Redirect(routes.Application.tasksOLD)
     //Ok(views.html.index("Your new application is ready."))
     //Ok("Hello world)
   }
@@ -63,11 +63,19 @@ object Application extends Controller {
         }
       })
   }
-  
+
   def deleteTask(id: Long) = Action {
-  Task.delete(id)
-  Redirect(routes.Application.tasks)
-}
+    if (Task.delete(id) == 1)
+      Ok
+    else
+      NotFound
+  }
+  
+  //Funcion antigua de borrado con interfaz web
+  def deleteTaskOLD(id: Long) = Action {
+    Task.delete(id)
+    Redirect(routes.Application.tasks)
+  }
 
 
 }
