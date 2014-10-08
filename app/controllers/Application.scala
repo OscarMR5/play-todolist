@@ -8,7 +8,16 @@ import play.api.data.Forms._
 
 import models.Task
 
+import play.api.mvc._
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
+
 object Application extends Controller {
+  
+  implicit val taskWrites: Writes[Task] = (
+  (JsPath \ "id").write[Long] and
+  (JsPath \ "label").write[String]
+)(unlift(Task.unapply))
 
    val taskForm = Form(
       "label" -> nonEmptyText
@@ -25,7 +34,8 @@ object Application extends Controller {
 }
 
   def readTask(id: Long) = Action {
-    Ok(views.html.index(Task.all(), taskForm))
+    val json = Json.toJson(Task.getTask(id) )
+    Ok(json)
   }
   
   def newTask = Action { implicit request =>
