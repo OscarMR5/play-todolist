@@ -2,7 +2,7 @@ package models
 
 import anorm._
 import anorm.SqlParser._
-
+import scala.language.postfixOps
 import play.api.db._
 import play.api.Play.current
 
