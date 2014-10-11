@@ -10,31 +10,39 @@ case class Task(id: Long, label: String)
 
 object Task {
 
-	val task = {
-  get[Long]("id") ~ 
-  get[String]("label") map {
-    case id~label => Task(id, label)
+  val task = {
+    get[Long]("id") ~
+      get[String]("label") map {
+        case id ~ label => Task(id, label)
+      }
   }
-}
+
+  /**
+   * Retrieve a computer from the id.
+   */
+  def getTask(id: Long): Option[Task] = {
+    DB.withConnection { implicit connection =>
+      SQL("select * from task where id = {id}").on('id -> id).as(task.singleOpt)
+    }
+  }
 
   def all(): List[Task] = DB.withConnection { implicit c =>
-  SQL("select * from task").as(task *)
-}
-  
-def create(label: String) {
-  DB.withConnection { implicit c =>
-    SQL("insert into task (label) values ({label})").on(
-      'label -> label
-    ).executeUpdate()
+    SQL("select * from task").as(task *)
   }
-}
 
-def delete(id: Long) {
-  DB.withConnection { implicit c =>
-    SQL("delete from task where id = {id}").on(
-      'id -> id
-    ).executeUpdate()
+  def create(label: String): Option[Long] = {
+    val id: Option[Long] = DB.withConnection { implicit c =>
+      SQL("insert into task (label) values ({label})").on(
+        'label -> label).executeInsert()
+    }
+    id
   }
-}
-  
+
+  def delete(id: Long) = {
+    DB.withConnection { implicit c =>
+      SQL("delete from task where id = {id}").on(
+        'id -> id).executeUpdate()
+    }
+  }
+
 }

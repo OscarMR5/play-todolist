@@ -13,3 +13,7 @@ dist
 /.project
 /RUNNING_PID
 /.settings
+.cache
+bin/
+play-todolist.sublime-workspace
+play-todolist.sublime-project
