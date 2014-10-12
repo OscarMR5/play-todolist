@@ -1,39 +1,50 @@
-# Tasks evolution and create table task-user
+# Tasks evolution and create table taskuser
 
 # --- !Ups
 
 
-CREATE TABLE task-user (
+CREATE TABLE taskuser (
     name varchar(255) PRIMARY KEY
 );
-#Datos de prueba usuarios
-INSERT INTO task-user
+-- Datos de prueba usuarios
+INSERT INTO taskuser
+VALUES ('guest'); -- Invitado
+INSERT INTO taskuser
 VALUES ('oscarmarco');
-INSERT INTO task-user
+INSERT INTO taskuser
 VALUES ('pedrogarcia');
-INSERT INTO task-user
+INSERT INTO taskuser
 VALUES ('davidblanco');
-INSERT INTO task-user
+INSERT INTO taskuser
 VALUES ('javiertolosa');
-INSERT INTO task-user
+INSERT INTO taskuser
 VALUES ('jorgeruiz');
 
 
-ALTER TABLE task ADD owner varchar(255) REFERENCES task-user (name);
+ALTER TABLE task ADD COLUMN owner varchar(255);-- REFERENCES taskuser (name);
 
- #Datos de prueba usuarios
+-- Datos de prueba usuarios
 INSERT INTO task (label,owner)
-VALUES (tarea1,'oscarmarco');
-INSERT INTO task
-VALUES (tarea2,'oscarmarco');
-INSERT INTO task
-VALUES (tarea3,'davidblanco');
-INSERT INTO task
-VALUES (tarea4,'javiertolosa');
-INSERT INTO task
-VALUES (tarea5,'jorgeruiz');
+VALUES ('tarea1','oscarmarco');
+INSERT INTO task (label,owner) 
+VALUES ('tarea2','oscarmarco');
+INSERT INTO task (label,owner)
+VALUES ('tarea3','davidblanco');
+INSERT INTO task (label,owner)
+VALUES ('tarea4','javiertolosa');
+INSERT INTO task (label,owner)
+VALUES ('tarea5','guest');
+INSERT INTO task (label,owner)
+VALUES ('tarea6','guest');
+INSERT INTO task (label,owner)
+VALUES ('tarea7','guest');
+INSERT INTO task (label,owner)
+VALUES ('tarea8','guest');
+
+ALTER TABLE task ADD CONSTRAINT fkeytask FOREIGN KEY (owner) REFERENCES taskuser (name);
 
 # --- !Downs
 
-ALTER TABLE task DROP owner;
-DROP TABLE task-user;
+ALTER TABLE task DROP CONSTRAINT fkeytask;
+ALTER TABLE task DROP COLUMN owner;
+DROP TABLE taskuser;
