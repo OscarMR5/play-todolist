@@ -46,12 +46,15 @@ object Application extends Controller {
       Ok(json)
     }
   }
-  
+
   //Funcion de Feature2 listar tareas de un usuario.
   def readUserTasks(user: String) = Action {
-    
-    val json = Json.toJson(Task.all())
-    Ok(json)
+    if (User.getUser(user).isEmpty) {
+      NotFound
+    } else {
+      val json = Json.toJson(Task.listUserTask(user))
+      Ok(json)
+    }
   }
 
   def newTask = Action { implicit request =>

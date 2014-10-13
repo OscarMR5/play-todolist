@@ -23,7 +23,7 @@ object User {
    */
   def getUser(name: String): Option[User] = {
     DB.withConnection { implicit connection =>
-      SQL("select * from user where name = {name}").on('name -> name).as(user.singleOpt)
+      SQL("select * from taskuser where name = {name}").on('name -> name).as(user.singleOpt)
     }
   }
   
