@@ -12,6 +12,8 @@ GET     /tasks/:id              controllers.Application.readTask(id: Long)
 POST    /tasks                  controllers.Application.newTask
 POST    /tasks/:id/delete       controllers.Application.deleteTaskOLD(id: Long)
 DELETE  /tasks/:id              controllers.Application.deleteTask(id: Long)
+#Feature2
+GET     /:user/tasks            controllers.Application.readUserTasks(user: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

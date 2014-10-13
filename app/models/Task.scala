@@ -18,7 +18,7 @@ object Task {
   }
 
   /**
-   * Retrieve a computer from the id.
+   * Retrieve a task from the id.
    */
   def getTask(id: Long): Option[Task] = {
     DB.withConnection { implicit connection =>
