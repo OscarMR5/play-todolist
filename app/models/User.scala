@@ -5,6 +5,8 @@ import anorm.SqlParser._
 import scala.language.postfixOps
 import play.api.db._
 import play.api.Play.current
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
 
 case class User(name: String)
 
@@ -25,5 +27,9 @@ object User {
     }
   }
   
-  
+implicit val userWrites = new Writes[User] {
+  def writes(user : User) = Json.obj(
+    "name" -> user.name
+  )
+}
 }

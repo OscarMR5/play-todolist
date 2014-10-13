@@ -5,15 +5,18 @@ import anorm.SqlParser._
 import scala.language.postfixOps
 import play.api.db._
 import play.api.Play.current
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
 
-case class Task(id: Long, label: String)
+case class Task(id: Long, label: String, owner: String)
 
 object Task {
 
   val task = {
     get[Long]("id") ~
-      get[String]("label") map {
-        case id ~ label => Task(id, label)
+      get[String]("label")~
+      get[String] ("owner")map {
+        case id ~ label ~ owner => Task(id, label, owner)
       }
   }
 
@@ -29,11 +32,15 @@ object Task {
   def all(): List[Task] = DB.withConnection { implicit c =>
     SQL("select * from task").as(task *)
   }
+  
+  def listUserTask(name: String): List[Task] = DB.withConnection { implicit c =>
+    SQL("select * from task where owner = {name}").on('name -> name).as(task *)
+  }
 
-  def create(label: String): Option[Long] = {
+  def create(label: String, owner: String = "guest"): Option[Long] = {
     val id: Option[Long] = DB.withConnection { implicit c =>
-      SQL("insert into task (label) values ({label})").on(
-        'label -> label).executeInsert()
+      SQL("insert into task (label,owner) values ({label},{owner})").on(
+        'label -> label, 'owner -> owner).executeInsert()
     }
     id
   }
@@ -44,5 +51,9 @@ object Task {
         'id -> id).executeUpdate()
     }
   }
-
+  
+  implicit val taskWrites: Writes[Task] = (
+  (JsPath \ "id").write[Long] and
+  (JsPath \ "label").write[String] and
+  (JsPath \ "owner").write[String])(unlift(Task.unapply))
 }

@@ -7,17 +7,14 @@ import play.api.data._
 import play.api.data.Forms._
 
 import models.Task
+import models.User
 
 import play.api.mvc._
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 
 object Application extends Controller {
-  
-  implicit val taskWrites: Writes[Task] = (
-  (JsPath \ "id").write[Long] and
-  (JsPath \ "label").write[String]
-)(unlift(Task.unapply))
+ 
 
    val taskForm = Form(
       "label" -> nonEmptyText
@@ -52,6 +49,7 @@ object Application extends Controller {
   
   //Funcion de Feature2 listar tareas de un usuario.
   def readUserTasks(user: String) = Action {
+    
     val json = Json.toJson(Task.all())
     Ok(json)
   }
