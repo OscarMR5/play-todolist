@@ -57,11 +57,12 @@ object Application extends Controller {
     }
   }
 
+  //En feature 2 crea tareas con owner guest
   def newTask = Action { implicit request =>
     taskForm.bindFromRequest.fold(
       errors => BadRequest(views.html.index(Task.all(), errors)),
       label => {
-        val id = Task.create(label)
+        val id = Task.create(label) //valor por defecto para owner es guest
         if (id.isEmpty) {
           InternalServerError
         } else {
