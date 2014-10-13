@@ -56,4 +56,10 @@ object Task {
   (JsPath \ "id").write[Long] and
   (JsPath \ "label").write[String] and
   (JsPath \ "owner").write[String])(unlift(Task.unapply))
+  
+  implicit val taskReads: Reads[Task] = (
+  (JsPath \ "id").read[Long] and
+  (JsPath \ "label").read[String] and
+  (JsPath \ "owner").read[String]
+)(Task.apply _)
 }

@@ -71,6 +71,24 @@ object Application extends Controller {
       })
   }
 
+  //Funcion de Feature2 nueva tarea de un usuario a partir de JSON Task recibido comprabar el label
+  def newUserTask(user: String) = Action(BodyParsers.parse.json) { request =>
+    val taskResult = request.body.validate[Task]
+    taskResult.fold(
+      errors => {
+        BadRequest(Json.obj("status" -> "KO", "message" -> JsError.toFlatJson(errors)))
+      },
+      task => {
+        if(User.getUser(user ).isEmpty){
+          NotFound("Usuario no registrado")
+        }
+        else{
+        Task.create(task.label, user)
+        Ok(Json.obj("status" -> "OK", "message" -> ("Tarea: " + task.label + " guardada.")))
+        }
+      })
+  }
+
   def deleteTask(id: Long) = Action {
     if (Task.delete(id) == 1)
       Ok
