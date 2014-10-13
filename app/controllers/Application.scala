@@ -26,9 +26,9 @@ object Application extends Controller {
     //Ok("Hello world)
   }
   
-  //Nueva funcion que funciona a traves de API REST
+  //En feature 2 devuelve las tareas de guest
   def tasks = Action {
-    val json = Json.toJson(Task.all())
+    val json = Json.toJson(Task.listUserTask("guest"))
     Ok(json)
   }
   
