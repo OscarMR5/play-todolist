@@ -7,17 +7,14 @@ import play.api.data._
 import play.api.data.Forms._
 
 import models.Task
+import models.User
 
 import play.api.mvc._
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 
 object Application extends Controller {
-  
-  implicit val taskWrites: Writes[Task] = (
-  (JsPath \ "id").write[Long] and
-  (JsPath \ "label").write[String]
-)(unlift(Task.unapply))
+ 
 
    val taskForm = Form(
       "label" -> nonEmptyText
@@ -29,9 +26,9 @@ object Application extends Controller {
     //Ok("Hello world)
   }
   
-  //Nueva funcion que funciona a traves de API REST
+  //En feature 2 devuelve las tareas de guest
   def tasks = Action {
-    val json = Json.toJson(Task.all())
+    val json = Json.toJson(Task.listUserTask("guest"))
     Ok(json)
   }
   
@@ -50,16 +47,45 @@ object Application extends Controller {
     }
   }
 
+  //Funcion de Feature2 listar tareas de un usuario.
+  def readUserTasks(user: String) = Action {
+    if (User.getUser(user).isEmpty) {
+      NotFound
+    } else {
+      val json = Json.toJson(Task.listUserTask(user))
+      Ok(json)
+    }
+  }
+
+  //En feature 2 crea tareas con owner guest
   def newTask = Action { implicit request =>
     taskForm.bindFromRequest.fold(
       errors => BadRequest(views.html.index(Task.all(), errors)),
       label => {
-        val id = Task.create(label)
+        val id = Task.create(label) //valor por defecto para owner es guest
         if (id.isEmpty) {
           InternalServerError
         } else {
           val json = Json.toJson(Task.getTask(id.get).get)
           Created(json)
+        }
+      })
+  }
+
+  //Funcion de Feature2 nueva tarea de un usuario a partir de JSON Task recibido comprabar el label
+  def newUserTask(user: String) = Action(BodyParsers.parse.json) { request =>
+    val taskResult = request.body.validate[Task]
+    taskResult.fold(
+      errors => {
+        BadRequest(Json.obj("status" -> "KO", "message" -> JsError.toFlatJson(errors)))
+      },
+      task => {
+        if(User.getUser(user ).isEmpty){
+          NotFound("Usuario no registrado")
+        }
+        else{
+        Task.create(task.label, user)
+        Ok(Json.obj("status" -> "OK", "message" -> ("Tarea: " + task.label + " guardada.")))
         }
       })
   }
