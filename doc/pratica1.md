@@ -81,7 +81,8 @@ DROP TABLE taskuser;
 
 ```
  
- #####Evolución de la base de datos para Feature 3
+#####Evolución de la base de datos para Feature 3
+
   Para la feature 3 se ha añadido la columna fecha de tipo date en la tabla task. También se han añadido datos con fechas de ejemplo.
 
 ```sql
