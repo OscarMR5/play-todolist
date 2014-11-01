@@ -4,7 +4,7 @@
 # --- !Ups
 --- Incluir la fecha de terminacion a la tarea
  
-ALTER TABLE task ADD feha date;
+ALTER TABLE task ADD COLUMN fecha date;
 
 --- Incluir tareas con fecha
 INSERT INTO task (label,owner,fecha)

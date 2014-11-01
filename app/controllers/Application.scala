@@ -67,16 +67,6 @@ object Application extends Controller {
     }
   }
 
-  //Funcion de Feature2 listar tareas de un usuario.
-  def readUserTasks(user: String) = Action {
-    if (User.getUser(user).isEmpty) {
-      NotFound
-    } else {
-      val json = Json.toJson(Task.listUserTask(user))
-      Ok(json)
-    }
-  }
-
   //Funcion de Feature3 listar tareas de un usuario y fecha
   def readUserTasks(user: String, fechaIn: Option[String]) = Action {
     if (User.getUser(user).isEmpty) {
@@ -136,7 +126,7 @@ object Application extends Controller {
   }
 
   //Funcion de Feature3 Borrar las tareas de un usuario de la fecha indicada
-  def deleteTask(user: String, fechaIn: Option[String]) = Action {
+  def deleteTaskUser(user: String, fechaIn: Option[String]) = Action {
     if (User.getUser(user).isEmpty) {
       NotFound
     } else {
