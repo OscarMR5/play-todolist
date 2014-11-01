@@ -112,7 +112,7 @@ object Application extends Controller {
           NotFound("Usuario no registrado")
         }
         else{
-        Task.create(task.label, user)
+        Task.create(task.label, user, task.fecha)
         Ok(Json.obj("status" -> "OK", "message" -> ("Tarea: " + task.label + " guardada.")))
         }
       })
