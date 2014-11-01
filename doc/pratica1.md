@@ -41,9 +41,20 @@ Tenemos que utilizar distintos conocimientos y herramientas para realizar esta p
 | Petición        | Descripción   |
 | ------------- | :-------------: |
 | GET  /tasks           |       Devuelve una lista JSON con todas las tareas del usuario anónimo (guest)|
-| POST   /tasks/    |   Ahora crea una nueva tarea para el usuario anónimo  |
+| POST   /tasks/    |   Ahora crea una nueva tarea para el usuario anónimo. A partir de una petición con la tarea en JSON en el cuerpo  |
 | GET      /:user/tasks  |      Lista todas las tareas del usuario indicado o lista vacía en JSON. HTTP 404 si el usuario no existe |
-| POST     /:user/tasks  |      Añade una nueva tarea a un usuario existe, devolviendo un JSON que representa la nueva tarea. En otro caso 404.  |
+| POST     /:user/tasks  |      Añade una nueva tarea a un usuario existe, devolviendo un JSON que representa la nueva tarea.La tarea se envia en el cuerpo de la petición en JSON. En otro caso 404.  |
+
+
+###Feature 3  
+  
+| Petición        | Descripción   |
+| ------------- | :-------------: |
+| POST   /:user/tasks      |      Igual que antes pero ahora la tarea en JSON recibida puede tener un campo fecha |
+| GET     /:user/tasks(?fecha)     |      Ahora Este método puede recibir un parámetro con la fecha para filtrar por día |
+| GET     /:user/tasks/hoy |      Devuelve una lista JSON con las tareas con fecha de hoy                         |
+| DELETE  /:user/tasks?fecha=yyyy/MM/dd     |      Eliminar las tareas de un dia concreto de un usuario    |
+
 
 
 #####Evolución de la base de datos para Feature 2
@@ -70,7 +81,12 @@ DROP TABLE taskuser;
 
 ```
  
+ #####Evolución de la base de datos para Feature 3
+  Para la feature 3 se ha añadido la columna fecha de tipo date en la tabla task. También se han añadido datos con fechas de ejemplo.
 
+```sql
+ALTER TABLE task ADD COLUMN fecha date;
+```
 -----
 
 ####Author: Óscar Marco Ródenas
