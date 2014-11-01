@@ -13,8 +13,15 @@ POST    /tasks                  controllers.Application.newTask
 POST    /tasks/:id/delete       controllers.Application.deleteTaskOLD(id: Long)
 DELETE  /tasks/:id              controllers.Application.deleteTask(id: Long)
 #Feature2
-GET     /:user/tasks            controllers.Application.readUserTasks(user: String)
+#En feature3
+#GET     /:user/tasks            controllers.Application.readUserTasks(user: String)
 POST    /:user/tasks            controllers.Application.newUserTask(user: String)
+#Feature3
+#Consulta las tareas de un usuario por fecha o hoy. Fecha en query string
+GET     /:user/tasks            controllers.Application.readUserTasks(user: String, fecha: Option[String])
+GET     /:user/tasks/hoy        controllers.Application.readUserTasksNow(user: String)
+#Eliminar las tareas de un dia de un usuario
+DELETE  /:user/tasks            controllers.Application.deleteTaskUser(user: String, fecha: Option[String])
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

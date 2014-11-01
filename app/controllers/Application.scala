@@ -13,8 +13,28 @@ import play.api.mvc._
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 
+import java.util.Date
+import java.text.SimpleDateFormat
+
 object Application extends Controller {
- 
+
+  val fechaWrite = Writes.dateWrites("yyyy-MM-dd")
+  val fechaRead = Reads.dateReads("yyyy-MM-dd")
+  val fechaFormatter = new SimpleDateFormat("yyyy-MM-dd")
+  
+  implicit val taskWrites: Writes[Task] = (
+    (JsPath \ "id").write[Long] and
+    (JsPath \ "label").write[String] and
+    (JsPath \ "owner").write[String] and
+    (JsPath \ "fecha").writeNullable[Date](fechaWrite)
+  )(unlift(Task.unapply))
+
+  implicit val taskReads: Reads[Task] = (
+    (JsPath \ "id").read[Long] and
+    (JsPath \ "label").read[String] and
+    (JsPath \ "owner").read[String] and
+    (JsPath \ "fecha").readNullable[Date](fechaRead)
+  )(Task.apply _)
 
    val taskForm = Form(
       "label" -> nonEmptyText
@@ -47,15 +67,23 @@ object Application extends Controller {
     }
   }
 
-  //Funcion de Feature2 listar tareas de un usuario.
-  def readUserTasks(user: String) = Action {
+  //Funcion de Feature3 listar tareas de un usuario y fecha
+  def readUserTasks(user: String, fechaIn: Option[String]) = Action {
     if (User.getUser(user).isEmpty) {
       NotFound
     } else {
-      val json = Json.toJson(Task.listUserTask(user))
+      val fecha = fechaIn match{
+        case Some(fechaIn) => Some(fechaFormatter.parse(fechaIn))
+        case None => None
+      }
+      val json = Json.toJson(Task.listUserTask(user, fecha))
       Ok(json)
     }
   }
+
+  //Funcion de Feature3 Listar las tareas de un usuario en la fecha actual
+  def readUserTasksNow(user: String) = 
+    readUserTasks(user, Some(fechaFormatter.format(new Date)))
 
   //En feature 2 crea tareas con owner guest
   def newTask = Action { implicit request =>
@@ -84,7 +112,7 @@ object Application extends Controller {
           NotFound("Usuario no registrado")
         }
         else{
-        Task.create(task.label, user)
+        Task.create(task.label, user, task.fecha)
         Ok(Json.obj("status" -> "OK", "message" -> ("Tarea: " + task.label + " guardada.")))
         }
       })
@@ -95,6 +123,25 @@ object Application extends Controller {
       Ok
     else
       NotFound
+  }
+
+  //Funcion de Feature3 Borrar las tareas de un usuario de la fecha indicada
+  def deleteTaskUser(user: String, fechaIn: Option[String]) = Action {
+    if (User.getUser(user).isEmpty) {
+      NotFound
+    } else {
+      val fecha = fechaIn match{
+        case Some(fechaIn) => Some(fechaFormatter.parse(fechaIn))
+        case None => None //No se ha indicado la fecha
+      }
+      if(fecha == None)
+        BadRequest //No se ha indicado la fecha
+      else{
+        val tareas = Task.listUserTask(user, fecha)
+        tareas.foreach(x => Task.delete(x.id))//TODO todas las pruebas
+        Ok
+      }
+    }
   }
   
   //Funcion antigua de borrado con interfaz web
