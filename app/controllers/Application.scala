@@ -21,20 +21,6 @@ object Application extends Controller {
   val fechaWrite = Writes.dateWrites("yyyy-MM-dd")
   val fechaRead = Reads.dateReads("yyyy-MM-dd")
   val fechaFormatter = new SimpleDateFormat("yyyy-MM-dd")
-  
-  implicit val taskWrites: Writes[Task] = (
-    (JsPath \ "id").write[Long] and
-    (JsPath \ "label").write[String] and
-    (JsPath \ "owner").write[String] and
-    (JsPath \ "fecha").writeNullable[Date](fechaWrite)
-  )(unlift(Task.unapply))
-
-  implicit val taskReads: Reads[Task] = (
-    (JsPath \ "id").read[Long] and
-    (JsPath \ "label").read[String] and
-    (JsPath \ "owner").read[String] and
-    (JsPath \ "fecha").readNullable[Date](fechaRead)
-  )(Task.apply _)
 
    val taskForm = Form(
       "label" -> nonEmptyText
@@ -100,7 +86,7 @@ object Application extends Controller {
       })
   }
 
-  //Funcion de Feature2 nueva tarea de un usuario a partir de JSON Task recibido comprabar el label
+  //Funcion de Feature2 nueva tarea de un usuario a partir de JSON Task recibido comprobar el label
   def newUserTask(user: String) = Action(BodyParsers.parse.json) { request =>
     val taskResult = request.body.validate[Task]
     taskResult.fold(
