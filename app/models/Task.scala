@@ -9,6 +9,8 @@ import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import java.util.Date
 
+import java.text.SimpleDateFormat
+
 //Fecha tipo Option con valor por defecto
 case class Task(id: Long, label: String, owner: String, fecha: Option[Date] = None)
 
@@ -58,4 +60,21 @@ object Task {
         'id -> id).executeUpdate()
     }
   }
+  val fechaWrite = Writes.dateWrites("yyyy-MM-dd")
+  val fechaRead = Reads.dateReads("yyyy-MM-dd")
+  val fechaFormatter = new SimpleDateFormat("yyyy-MM-dd")
+
+    implicit val taskWrites: Writes[Task] = (
+    (JsPath \ "id").write[Long] and
+    (JsPath \ "label").write[String] and
+    (JsPath \ "owner").write[String] and
+    (JsPath \ "fecha").writeNullable[Date](fechaWrite)
+  )(unlift(Task.unapply))
+
+  implicit val taskReads: Reads[Task] = (
+    (JsPath \ "id").read[Long] and
+    (JsPath \ "label").read[String] and
+    (JsPath \ "owner").read[String] and
+    (JsPath \ "fecha").readNullable[Date](fechaRead)
+  )(Task.apply _)
 }
